@@ -6,6 +6,116 @@ output: github_document
 ---
 
 ```{r, echo=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(p8105.datasets)
+library(lubridate)
+```
+
+## Problem 1
+
+```{r}
+data("instacart")
+
+# making plot showing number of items order in each aisle
+aisles_df =
+  instacart %>% 
+  group_by(aisle_id, aisle) %>% 
+  summarize(n_obs = n()) %>% 
+  filter(
+    n_obs > 10000) 
+
+aisles_df %>% 
+  ggplot(aes(x = aisle_id, y = n_obs)) +
+  geom_point(alpha = .5) +
+  labs(
+    title = "Number of items ordered from each aisle",
+    x = "Aisle_id",
+    y = "Number of items ordered") + 
+  scale_x_continuous(
+    breaks = c(0,20,40,60,80,100,120)) +
+  theme_bw()
+
+# Table showing most popular items in three aisles
+most_popular_item =
+  instacart %>% 
+  filter(
+    aisle == "baking ingredients" | 
+    aisle =="dog food care" | 
+    aisle =="packaged vegetables fruits"
+    ) %>% 
+  group_by(aisle,product_name) %>% 
+  summarize(count= n()) %>% 
+  mutate(
+    order_ranking = min_rank(desc(count))
+  ) %>% 
+  filter(order_ranking < 4)
+
+# Table showing mean hour of the day
+hour =
+  instacart %>% 
+  filter(
+    product_name == "Pink Lady Apples" | 
+    product_name == "Coffee Ice Cream"
+  ) %>% 
+  select(
+    product_name,
+    order_dow,
+    order_hour_of_day
+  ) %>% 
+  mutate(
+    order_dow = wday(order_dow + 1, label = TRUE)
+  ) %>% 
+  group_by(
+    product_name,
+    order_dow
+    ) %>% 
+  summarize(
+    mean_order_hour_of_day = mean(order_hour_of_day)
+  ) %>% 
+  pivot_wider(
+    names_from = order_dow,
+    values_from = mean_order_hour_of_day
+  )
+
+```
+
+
+##??? make histogram 
+```{r}
+aisles_df %>% 
+  ggplot(aes(x = aisle_id, fill= n_obs)) +
+  geom_histogram() +
+  labs(
+    title = "Number of items ordered from each aisle",
+    x = "aisle_id",
+    y = "number of items ordered"
+  )
+```
+
+
+
+There are 134 aisles. The aisle 83 which is corresponding to fresh vegetables is being ordered the most.
+
+```{r}
+
+```
+
+## Problem 3
+
+```{r}
+accel_df = 
+  read_csv("accel_data.csv") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    activity_1:activity_1440,
+    names_to = "minute",
+    names_prefix = "activity_",
+    values_to = "activity"
+  ) %>% 
+  pivot_wider(
+    names_from = "day",
+    values_from = "activity"
+  )
+
 ```
 
