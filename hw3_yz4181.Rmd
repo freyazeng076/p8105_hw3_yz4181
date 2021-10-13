@@ -1,0 +1,11 @@
+---
+title: "hw3_yz4181"
+author: "Yuanyuan Zeng(yz4181)"
+date: "10/12/2021"
+output: github_document
+---
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
