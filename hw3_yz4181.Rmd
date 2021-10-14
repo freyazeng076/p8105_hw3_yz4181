@@ -13,19 +13,24 @@ library(lubridate)
 
 ## Problem 1
 
-```{r}
+```{r, message = FALSE}
 data("instacart")
 
-# making plot showing number of items order in each aisle
+# find the number of aisle and aisle that the most items ordered from
 aisles_df =
   instacart %>% 
   group_by(aisle_id, aisle) %>% 
-  summarize(n_obs = n()) %>% 
-  filter(
-    n_obs > 10000) 
+  summarize(order_times = n()) %>% 
+  arrange(desc(order_times))
 
+nrow(aisles_df)
+head(aisles_df, 5)
+
+# making plot showing number of items order in each aisle
 aisles_df %>% 
-  ggplot(aes(x = aisle_id, y = n_obs)) +
+  filter(
+    order_times > 10000) %>% 
+  ggplot(aes(x = aisle_id, y = order_times)) +
   geom_point(alpha = .5) +
   labs(
     title = "Number of items ordered from each aisle",
@@ -44,44 +49,42 @@ most_popular_item =
     aisle =="packaged vegetables fruits"
     ) %>% 
   group_by(aisle,product_name) %>% 
-  summarize(count= n()) %>% 
+  summarize(number_of_order_times = n()) %>% 
   mutate(
-    order_ranking = min_rank(desc(count))
+    order_ranking = min_rank(desc(number_of_order_times))
   ) %>% 
   filter(order_ranking < 4)
 
+most_popular_item
+
 # Table showing mean hour of the day
-hour =
+mean_hour_of_the_day =
   instacart %>% 
   filter(
     product_name == "Pink Lady Apples" | 
-    product_name == "Coffee Ice Cream"
-  ) %>% 
+    product_name == "Coffee Ice Cream") %>% 
   select(
     product_name,
     order_dow,
-    order_hour_of_day
-  ) %>% 
+    order_hour_of_day) %>% 
   mutate(
-    order_dow = wday(order_dow + 1, label = TRUE)
-  ) %>% 
+    order_dow = wday(order_dow + 1, label = TRUE)) %>% 
   group_by(
     product_name,
-    order_dow
-    ) %>% 
+    order_dow) %>% 
   summarize(
-    mean_order_hour_of_day = mean(order_hour_of_day)
-  ) %>% 
+    mean_order_hour_of_day = mean(order_hour_of_day)) %>% 
   pivot_wider(
     names_from = order_dow,
     values_from = mean_order_hour_of_day
   )
 
+mean_hour_of_the_day
 ```
 
 
 ##??? make histogram 
-```{r}
+
 aisles_df %>% 
   ggplot(aes(x = aisle_id, fill= n_obs)) +
   geom_histogram() +
@@ -89,33 +92,79 @@ aisles_df %>%
     title = "Number of items ordered from each aisle",
     x = "aisle_id",
     y = "number of items ordered"
-  )
-```
 
 
+Summary:
 
-There are 134 aisles. The aisle 83 which is corresponding to fresh vegetables is being ordered the most.
+In the aisles_df, there are 134 rows and 3 variables which are aisle_id, aisle, and order_times. From this table, we know that there are 134 aisles and the aisle 83 which is corresponding to fresh vegetables is being ordered the most. From the plot, we notice that there are two aisle which are being ordered most. The data frame of most popular items have 9 rows and 4 variables which are aisle, product_name, number of order times, and order ranking. The most popular items in "baking ingredients" are 'Cane Sugar', 'Light Brown Sugar', and 'Pure Baking Soda'; in "dog food care" are 'Organix Chicken & Brown Rice Recipe', 'Small Dog Biscuits', and 'Snack Sticks Chicken & Rice Recipe Dog Treats'; in "packaged vegetables fruits" are 'Organic Baby Spinach', 'Organic Blueberries', and 'Organic Raspberries'. The table of mean hour of the day includes 2 rows which are 'Pink Lady Apples' and 'Coffee Ice Cream' and 8 variables which are corresponding to seven days in a week. The mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week is calculated.
+
+
+## Problem 2
 
 ```{r}
+# Clean the data
+brfss =
+  brfss_smart2010 %>% 
+  janitor::clean_names() %>% 
+  filter(topic == "Overall Health",
+         response == "Excellent" |
+         response == "Poor") 
+
+
+
+# Find the states which were observed at 7 or more locations in 2002
+brfss %>% 
+  filter(year == 2002) %>% 
+  group_by(locationabbr) %>% 
+  summarize(n_obs = n()) %>% 
+  filter(n_obs >=7)
+
+# Find the states which were observed at 7 or more locations in 2010
+states_2010 =
+  brfss %>% 
+  filter(year == 2010) %>% 
+  group_by(locationabbr) %>% 
+  summarize(n_obs = n()) %>% 
+  filter(n_obs >=7)
+nrow(states_2010)
+pull(states_2010, var = 1)
 
 ```
+* There are 17 states that were observed at 7 or more locations in 2002 : "CO", "CT", "FL", "HI", "MA", "MD", "MI", "MN", "NC", "NH", "NJ", "NY", "OH", "PA", "RI", "UT", "WA"
+
+* There are 30 states that were observed at 7 or more location in 2010 : "CA" "CO" "CT" "FL" "GA" "HI" "ID" "KS" "LA" "MA" "MD" "ME" "MI" "MN" "NC" "NE" "NH""NJ" "NM" "NY" "OH" "OR" "PA" "RI" "SC" "TN" "TX" "UT" "VT" "WA"
+
+```{r}
+# Construct a data set and make a plot
+excellent_response = 
+  brfss %>% 
+  filter(response == "Excellent") %>% 
+  select(year, locationabbr, data_value) %>% 
+  group_by(year, locationabbr) %>% 
+  summarize(average_data_value = mean(data_value))
+
+excellent_response %>% 
+  ggplot(aes(x = year, y = average_data_value, color = locationabbr))+
+  geom_line() +
+  labs(
+    title = "Average value over time within a state",
+    x = "Year",
+    y = "Average data value"
+  ) 
+```
+
+```{r}
+# Make two-panel plot
+
+```
+
 
 ## Problem 3
 
 ```{r}
 accel_df = 
   read_csv("accel_data.csv") %>% 
-  janitor::clean_names() %>% 
-  pivot_longer(
-    activity_1:activity_1440,
-    names_to = "minute",
-    names_prefix = "activity_",
-    values_to = "activity"
-  ) %>% 
-  pivot_wider(
-    names_from = "day",
-    values_from = "activity"
-  )
+  janitor::clean_names()
 
 ```
 
