@@ -24,7 +24,7 @@ aisles_df =
   arrange(desc(order_times))
 
 nrow(aisles_df)
-head(aisles_df, 5)
+head(aisles_df, 1)
 
 # making plot showing number of items order in each aisle
 aisles_df %>% 
@@ -86,6 +86,15 @@ mean_hour_of_the_day
 ##??? make histogram 
 
 aisles_df %>% 
+  ggplot(aes(x = aisle_id)) +
+  geom_histogram() +
+  labs(
+    title = "Number of items ordered from each aisle",
+    x = "aisle_id",
+    y = "order_times")
+
+
+aisles_df %>% 
   ggplot(aes(x = aisle_id, fill= n_obs)) +
   geom_histogram() +
   labs(
@@ -109,7 +118,6 @@ brfss =
   filter(topic == "Overall Health",
          response == "Excellent" |
          response == "Poor") 
-
 
 
 # Find the states which were observed at 7 or more locations in 2002
