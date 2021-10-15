@@ -36,12 +36,10 @@ aisles_df %>%
     title = "Number of items ordered from each aisle",
     x = "Aisle_id",
     y = "Number of items ordered") + 
-  scale_x_continuous(
-    breaks = c(0,20,40,60,80,100,120)) +
   theme_bw()
 
 # Table showing most popular items in three aisles
-most_popular_item =
+most_popular_item = 
   instacart %>% 
   filter(
     aisle == "baking ingredients" | 
@@ -82,27 +80,6 @@ mean_hour_of_the_day =
 mean_hour_of_the_day
 ```
 
-
-##??? make histogram 
-
-aisles_df %>% 
-  ggplot(aes(x = aisle_id)) +
-  geom_histogram() +
-  labs(
-    title = "Number of items ordered from each aisle",
-    x = "aisle_id",
-    y = "order_times")
-
-
-aisles_df %>% 
-  ggplot(aes(x = aisle_id, fill= n_obs)) +
-  geom_histogram() +
-  labs(
-    title = "Number of items ordered from each aisle",
-    x = "aisle_id",
-    y = "number of items ordered"
-
-
 Summary:
 
 In the aisles_df, there are 134 rows and 3 variables which are aisle_id, aisle, and order_times. From this table, we know that there are 134 aisles and the aisle 83 which is corresponding to fresh vegetables is being ordered the most. From the plot, we notice that there are two aisle which are being ordered most. The data frame of most popular items have 9 rows and 4 variables which are aisle, product_name, number of order times, and order ranking. The most popular items in "baking ingredients" are 'Cane Sugar', 'Light Brown Sugar', and 'Pure Baking Soda'; in "dog food care" are 'Organix Chicken & Brown Rice Recipe', 'Small Dog Biscuits', and 'Snack Sticks Chicken & Rice Recipe Dog Treats'; in "packaged vegetables fruits" are 'Organic Baby Spinach', 'Organic Blueberries', and 'Organic Raspberries'. The table of mean hour of the day includes 2 rows which are 'Pink Lady Apples' and 'Coffee Ice Cream' and 8 variables which are corresponding to seven days in a week. The mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week is calculated.
@@ -110,37 +87,52 @@ In the aisles_df, there are 134 rows and 3 variables which are aisle_id, aisle, 
 
 ## Problem 2
 
-```{r}
+```{r, message=FALSE}
+data("brfss_smart2010")
+
 # Clean the data
 brfss =
   brfss_smart2010 %>% 
   janitor::clean_names() %>% 
   filter(topic == "Overall Health",
-         response == "Excellent" |
-         response == "Poor") 
+         response != "Excellent" |
+         response != "Poor" |
+         response != "Very good"|
+         response != "Good" |
+         response != "Fair") %>% 
+  mutate(
+    response = forcats::fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent"))
+  )
+```
 
-
+```{r}
 # Find the states which were observed at 7 or more locations in 2002
-brfss %>% 
+locations_2002 =
+  brfss %>% 
   filter(year == 2002) %>% 
   group_by(locationabbr) %>% 
   summarize(n_obs = n()) %>% 
   filter(n_obs >=7)
 
+nrow(locations_2002)
+pull(locations_2002,locationabbr)
+```
+
+```{r}
 # Find the states which were observed at 7 or more locations in 2010
-states_2010 =
+locations_2010 = 
   brfss %>% 
   filter(year == 2010) %>% 
   group_by(locationabbr) %>% 
   summarize(n_obs = n()) %>% 
   filter(n_obs >=7)
-nrow(states_2010)
-pull(states_2010, var = 1)
 
+nrow(locations_2010)
+pull(locations_2010,locationabbr)
 ```
-* There are 17 states that were observed at 7 or more locations in 2002 : "CO", "CT", "FL", "HI", "MA", "MD", "MI", "MN", "NC", "NH", "NJ", "NY", "OH", "PA", "RI", "UT", "WA"
+* There are 36 states that were observed at 7 or more locations in 2002 and the names of locations are listed above.
 
-* There are 30 states that were observed at 7 or more location in 2010 : "CA" "CO" "CT" "FL" "GA" "HI" "ID" "KS" "LA" "MA" "MD" "ME" "MI" "MN" "NC" "NE" "NH""NJ" "NM" "NY" "OH" "OR" "PA" "RI" "SC" "TN" "TX" "UT" "VT" "WA"
+* There are 45 states that were observed at 7 or more location in 2010 and the names of locations are listed above
 
 ```{r}
 # Construct a data set and make a plot
