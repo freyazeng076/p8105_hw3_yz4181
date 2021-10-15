@@ -19,7 +19,7 @@ data("instacart")
 # find the number of aisle and aisle that the most items ordered from
 aisles_df =
   instacart %>% 
-  group_by(aisle_id, aisle) %>% 
+  group_by(aisle) %>% 
   summarize(order_times = n()) %>% 
   arrange(desc(order_times))
 
@@ -30,13 +30,17 @@ head(aisles_df, 1)
 aisles_df %>% 
   filter(
     order_times > 10000) %>% 
-  ggplot(aes(x = aisle_id, y = order_times)) +
+  mutate(
+    aisle = factor(aisle), 
+    aisle = fct_reorder(aisle, order_times)
+  ) %>% 
+  ggplot(aes(x = aisle, y = order_times)) +
   geom_point(alpha = .5) +
   labs(
     title = "Number of items ordered from each aisle",
     x = "Aisle_id",
     y = "Number of items ordered") + 
-  theme_bw()
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 # Table showing most popular items in three aisles
 most_popular_item = 
@@ -95,11 +99,7 @@ brfss =
   brfss_smart2010 %>% 
   janitor::clean_names() %>% 
   filter(topic == "Overall Health",
-         response != "Excellent" |
-         response != "Poor" |
-         response != "Very good"|
-         response != "Good" |
-         response != "Fair") %>% 
+         response %in% c("Excellent","Poor", "Very good", "Good", "Fair")) %>% 
   mutate(
     response = forcats::fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent"))
   )
@@ -141,7 +141,7 @@ excellent_response =
   filter(response == "Excellent") %>% 
   select(year, locationabbr, data_value) %>% 
   group_by(year, locationabbr) %>% 
-  summarize(average_data_value = mean(data_value))
+  summarize(average_data_value = mean(data_value, na.rm = T))
 
 excellent_response %>% 
   ggplot(aes(x = year, y = average_data_value, color = locationabbr))+
@@ -168,6 +168,5 @@ NY_2006 =
 accel_df = 
   read_csv("accel_data.csv") %>% 
   janitor::clean_names() 
-
 ```
 
