@@ -135,7 +135,7 @@ pull(locations_2010,locationabbr)
 * There are 45 states that were observed at 7 or more location in 2010 and the names of locations are listed above
 
 ```{r}
-# Construct a data set and make a plot
+# Construct a data set and make a "spaghetti" plot
 excellent_response = 
   brfss %>% 
   filter(response == "Excellent") %>% 
@@ -155,7 +155,10 @@ excellent_response %>%
 
 ```{r}
 # Make two-panel plot
-
+NY_2006 = 
+  brfss %>%
+  filter(locationabbr == "NY") 
+  
 ```
 
 
@@ -164,7 +167,7 @@ excellent_response %>%
 ```{r}
 accel_df = 
   read_csv("accel_data.csv") %>% 
-  janitor::clean_names()
+  janitor::clean_names() 
 
 ```
 
