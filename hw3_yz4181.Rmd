@@ -180,9 +180,23 @@ The table includes 35 rows and 1444 columns. Two variables "day" and "weekday_we
 
 ```{r}
 total_activity =
+  accel_df %>% 
+  pivot_longer(
+    activity_1:activity_1440,
+    names_to = "activity_in_second",
+    values_to = "activity"
+  ) %>% 
+  group_by(week, day_id) %>% 
+  summarize(
+    total_acti = sum(activity)
+  )
 
-
-
-
+ggplot(total_activity, aes(x = day_id, y = total_acti)) +
+  geom_point() +
+  geom_line()+
+  labs(
+    x = "Day",
+    y = "Total Activity in a Day"
+  )
 ```
 
