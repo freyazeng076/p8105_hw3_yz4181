@@ -37,8 +37,8 @@ aisles_df %>%
   ggplot(aes(x = aisle, y = order_times)) +
   geom_point(alpha = .5) +
   labs(
-    title = "Number of items ordered from each aisle",
-    x = "Aisle_id",
+    title = "Figure1. Number of items ordered from each aisle",
+    x = "Aisle",
     y = "Number of items ordered") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
@@ -146,7 +146,7 @@ excellent_response %>%
   ggplot(aes(x = year, y = average_data_value, color = locationabbr))+
   geom_line() +
   labs(
-    title = "Average value over time within a state",
+    title = "Figure 2. Average value over time within a state",
     x = "Year",
     y = "Average data value"
   ) 
@@ -174,18 +174,20 @@ accel_df =
     weekday_weekend = 
       ifelse(day %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"), "weekday",
       ifelse(day %in% c("Saturday","Sunday"), "weekend", NA))) %>% 
-  select("weekday_weekend", "week", "day_id", everything())
-```
-The table includes 35 rows and 1444 columns. Two variables "day" and "weekday_weekend" are character. "week", "day_id", and all activity variables are numeric.
-
-```{r}
-total_activity =
-  accel_df %>% 
   pivot_longer(
     activity_1:activity_1440,
-    names_to = "activity_in_second",
-    values_to = "activity"
-  ) %>% 
+    names_to = "time",
+    names_prefix = "activity_",
+    values_to = "activity_count"
+  )
+
+```
+The original data records the activity in 5 weeks which are 35 days. In each day, the activity data is recorded 1440 times. After tidying the data, we aggregate all variables starting with "activity_" into one column "time". Now, the data set includes 6 variable: week, day_id, day, weekday_weekend, time, and activity_count.
+
+```{r}
+#showing total activity for each day
+total_activity =
+  accel_df %>% 
   group_by(week, day_id) %>% 
   summarize(
     total_acti = sum(activity)
@@ -196,7 +198,24 @@ ggplot(total_activity, aes(x = day_id, y = total_acti)) +
   geom_line()+
   labs(
     x = "Day",
-    y = "Total Activity in a Day"
+    y = "Total Activity in a Day",
+    title = "Figure3. Total activity in Each Day"
+  ) +
+  scale_y_continuous(
+    breaks = c(0,1E05, 2E05, 3E05, 4E05, 5E05, 6E05, 7E05),
   )
+```
+
+```{r}
+# showing the activity over the course of the day
+accel_df %>% 
+  group_by(day_id) %>% 
+  ggplot(
+    aes(x = activity_count,
+    y = time, 
+    color = week))+
+  geom_point()
+
+
 ```
 
