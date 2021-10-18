@@ -46,25 +46,24 @@ aisles_df %>%
 most_popular_item = 
   instacart %>% 
   filter(
-    aisle == "baking ingredients" | 
-    aisle =="dog food care" | 
-    aisle =="packaged vegetables fruits"
-    ) %>% 
+    aisle %in% c("baking ingredients", 
+                 "dog food care", 
+                 "packaged vegetables fruits")) %>% 
   group_by(aisle,product_name) %>% 
   summarize(number_of_order_times = n()) %>% 
   mutate(
     order_ranking = min_rank(desc(number_of_order_times))
   ) %>% 
-  filter(order_ranking < 4)
-
+  filter(order_ranking < 4) %>% 
+  select(-order_ranking)
+  
 most_popular_item
 
 # Table showing mean hour of the day
 mean_hour_of_the_day =
   instacart %>% 
   filter(
-    product_name == "Pink Lady Apples" | 
-    product_name == "Coffee Ice Cream") %>% 
+    product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>% 
   select(
     product_name,
     order_dow,
@@ -155,18 +154,35 @@ excellent_response %>%
 
 ```{r}
 # Make two-panel plot
-NY_2006 = 
-  brfss %>%
-  filter(locationabbr == "NY") 
-  
+brfss %>%
+  filter(locationabbr == "NY",
+         year %in% c(2006,2010)) %>% 
+  ggplot(aes(x = response, y = data_value)) +
+  geom_point() + 
+  geom_boxplot() +
+  facet_grid(.~year)
 ```
-
+In 2006, the mean value of data value is increasing from "Poor" to "Very good". The mean value of data value for "Excellent" is less than that for "Very good". The distribution of data value for "Good" is most widespread among all responses, In 2010, the mean value of data value is also increasing from "Poor" to "Very good". 
 
 ## Problem 3
 
 ```{r}
 accel_df = 
   read_csv("accel_data.csv") %>% 
-  janitor::clean_names() 
+  janitor::clean_names() %>% 
+  mutate(
+    weekday_weekend = 
+      ifelse(day %in% c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"), "weekday",
+      ifelse(day %in% c("Saturday","Sunday"), "weekend", NA))) %>% 
+  select("weekday_weekend", "week", "day_id", everything())
+```
+The table includes 35 rows and 1444 columns. Two variables "day" and "weekday_weekend" are character. "week", "day_id", and all activity variables are numeric.
+
+```{r}
+total_activity =
+
+
+
+
 ```
 
