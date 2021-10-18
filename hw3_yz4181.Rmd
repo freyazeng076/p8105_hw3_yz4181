@@ -25,7 +25,10 @@ aisles_df =
 
 nrow(aisles_df)
 head(aisles_df, 1)
+```
+In the aisles_df, there are 134 rows and 3 variables which are aisle_id, aisle, and order_times. From this table, we know that there are 134 aisles and the aisle 83 which is corresponding to fresh vegetables is being ordered the most. 
 
+```{r}
 # making plot showing number of items order in each aisle
 aisles_df %>% 
   filter(
@@ -41,7 +44,10 @@ aisles_df %>%
     x = "Aisle",
     y = "Number of items ordered") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+From the plot, we notice that there are two aisle which are being ordered most. 
 
+```{r}
 # Table showing most popular items in three aisles
 most_popular_item = 
   instacart %>% 
@@ -58,7 +64,11 @@ most_popular_item =
   select(-order_ranking)
   
 most_popular_item
+```
+The data frame of most popular items have 9 rows and 3 variables which are aisle, product_name, and number of order times. The most popular items in "baking ingredients" are 'Cane Sugar', 'Light Brown Sugar', and 'Pure Baking Soda'; in "dog food care" are 'Organix Chicken & Brown Rice Recipe', 'Small Dog Biscuits', and 'Snack Sticks Chicken & Rice Recipe Dog Treats'; in "packaged vegetables fruits" are 'Organic Baby Spinach', 'Organic Blueberries', and 'Organic Raspberries'.
 
+
+```{r}
 # Table showing mean hour of the day
 mean_hour_of_the_day =
   instacart %>% 
@@ -83,9 +93,7 @@ mean_hour_of_the_day =
 mean_hour_of_the_day
 ```
 
-Summary:
-
-In the aisles_df, there are 134 rows and 3 variables which are aisle_id, aisle, and order_times. From this table, we know that there are 134 aisles and the aisle 83 which is corresponding to fresh vegetables is being ordered the most. From the plot, we notice that there are two aisle which are being ordered most. The data frame of most popular items have 9 rows and 4 variables which are aisle, product_name, number of order times, and order ranking. The most popular items in "baking ingredients" are 'Cane Sugar', 'Light Brown Sugar', and 'Pure Baking Soda'; in "dog food care" are 'Organix Chicken & Brown Rice Recipe', 'Small Dog Biscuits', and 'Snack Sticks Chicken & Rice Recipe Dog Treats'; in "packaged vegetables fruits" are 'Organic Baby Spinach', 'Organic Blueberries', and 'Organic Raspberries'. The table of mean hour of the day includes 2 rows which are 'Pink Lady Apples' and 'Coffee Ice Cream' and 8 variables which are corresponding to seven days in a week. The mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week is calculated.
+The table of mean hour of the day includes 2 rows which are 'Pink Lady Apples' and 'Coffee Ice Cream' and 8 variables which are corresponding to seven days in a week. The mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week is calculated.
 
 
 ## Problem 2
@@ -103,6 +111,7 @@ brfss =
     response = forcats::fct_relevel(response, c("Poor", "Fair", "Good", "Very good", "Excellent"))
   )
 ```
+After cleaning the data set, there are 23 variables and 10625 rows. The table only include responses from "Poor" to "Excellent".
 
 ```{r}
 # Find the states which were observed at 7 or more locations in 2002
@@ -116,6 +125,7 @@ locations_2002 =
 nrow(locations_2002)
 pull(locations_2002,locationabbr)
 ```
+* There are 36 states that were observed at 7 or more locations in 2002 and the names of locations are listed above.
 
 ```{r}
 # Find the states which were observed at 7 or more locations in 2010
@@ -129,8 +139,6 @@ locations_2010 =
 nrow(locations_2010)
 pull(locations_2010,locationabbr)
 ```
-* There are 36 states that were observed at 7 or more locations in 2002 and the names of locations are listed above.
-
 * There are 45 states that were observed at 7 or more location in 2010 and the names of locations are listed above
 
 ```{r}
@@ -151,6 +159,7 @@ excellent_response %>%
     y = "Average data value"
   ) 
 ```
+Figure 2 show the average value over time within a state. We notice that most of average data value fall between 20 to 25. 
 
 ```{r}
 # Make two-panel plot
@@ -205,16 +214,19 @@ ggplot(total_activity, aes(x = day_id, y = total_acti)) +
     breaks = c(0,1E05, 2E05, 3E05, 4E05, 5E05, 6E05, 7E05),
   )
 ```
+Figure 3 shows the total activity in each day over 5 weeks. There is no apparent trend over the weeks. Most of the total activity in a day fall between 300000 and 500000.
 
 ```{r}
 # showing the activity over the course of the day
 accel_df %>% 
   group_by(day_id) %>% 
   ggplot(
-    aes(x = activity_count,
-    y = time, 
+    aes(x = time,
+    y = day_id, 
+    fill= activity_count,
     color = week))+
   geom_point()
+
 
 
 ```
