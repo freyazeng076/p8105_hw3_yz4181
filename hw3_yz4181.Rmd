@@ -9,6 +9,7 @@ output: github_document
 library(tidyverse)
 library(p8105.datasets)
 library(lubridate)
+library(ggplot2)
 ```
 
 ## Problem 1
@@ -199,7 +200,7 @@ total_activity =
   accel_df %>% 
   group_by(week, day_id) %>% 
   summarize(
-    total_acti = sum(activity)
+    total_acti = sum(activity_count)
   )
 
 ggplot(total_activity, aes(x = day_id, y = total_acti)) +
