@@ -22,14 +22,14 @@ aisles_df =
   instacart %>% 
   group_by(aisle) %>% 
   summarize(order_times = n()) %>% 
-  arrange(desc(order_times))
+  arrange(desc(order_times)) # order by order times for each aisle
 
 nrow(aisles_df)
 head(aisles_df, 1)
 ```
 In the aisles_df, there are 134 rows and 3 variables which are aisle_id, aisle, and order_times. From this table, we know that there are 134 aisles and the aisle 83 which is corresponding to fresh vegetables is being ordered the most. 
 
-```{r}
+```{r, message = FALSE}
 # making plot showing number of items order in each aisle
 aisles_df %>% 
   filter(
@@ -46,9 +46,9 @@ aisles_df %>%
     y = "Number of items ordered") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
-From the plot, we notice that there are two aisle which are being ordered most. 
+Figure 1 shows the number of items ordered in each aisle. We notice that fresh vegetables and fresh fruits are two aisles that being ordered most.
 
-```{r}
+```{r, message = FALSE}
 # Table showing most popular items in three aisles
 most_popular_item = 
   instacart %>% 
@@ -69,7 +69,7 @@ most_popular_item
 The data frame of most popular items have 9 rows and 3 variables which are aisle, product_name, and number of order times. The most popular items in "baking ingredients" are 'Cane Sugar', 'Light Brown Sugar', and 'Pure Baking Soda'; in "dog food care" are 'Organix Chicken & Brown Rice Recipe', 'Small Dog Biscuits', and 'Snack Sticks Chicken & Rice Recipe Dog Treats'; in "packaged vegetables fruits" are 'Organic Baby Spinach', 'Organic Blueberries', and 'Organic Raspberries'.
 
 
-```{r}
+```{r, message = FALSE}
 # Table showing mean hour of the day
 mean_hour_of_the_day =
   instacart %>% 
@@ -94,7 +94,7 @@ mean_hour_of_the_day =
 mean_hour_of_the_day
 ```
 
-The table of mean hour of the day includes 2 rows which are 'Pink Lady Apples' and 'Coffee Ice Cream' and 8 variables which are corresponding to seven days in a week. The mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week is calculated.
+The table of mean hour of the day includes 2 rows and 8 variables which are products names and corresponding to seven days in a week. The mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week is calculated.
 
 
 ## Problem 2
@@ -114,7 +114,7 @@ brfss =
 ```
 After cleaning the data set, there are 23 variables and 10625 rows. The table only include responses from "Poor" to "Excellent".
 
-```{r}
+```{r, message = FALSE}
 # Find the states which were observed at 7 or more locations in 2002
 locations_2002 =
   brfss %>% 
@@ -128,7 +128,7 @@ pull(locations_2002,locationabbr)
 ```
 * There are 36 states that were observed at 7 or more locations in 2002 and the names of locations are listed above.
 
-```{r}
+```{r, message = FALSE}
 # Find the states which were observed at 7 or more locations in 2010
 locations_2010 = 
   brfss %>% 
@@ -142,7 +142,7 @@ pull(locations_2010,locationabbr)
 ```
 * There are 45 states that were observed at 7 or more location in 2010 and the names of locations are listed above
 
-```{r}
+```{r, message = FALSE}
 # Construct a data set and make a "spaghetti" plot
 excellent_response = 
   brfss %>% 
@@ -162,7 +162,7 @@ excellent_response %>%
 ```
 Figure 2 show the average value over time within a state. We notice that most of average data value fall between 20 to 25. 
 
-```{r}
+```{r, message = FALSE}
 # Make two-panel plot
 brfss %>%
   filter(locationabbr == "NY",
@@ -172,11 +172,12 @@ brfss %>%
   geom_boxplot() +
   facet_grid(.~year)
 ```
-In 2006, the mean value of data value is increasing from "Poor" to "Very good". The mean value of data value for "Excellent" is less than that for "Very good". The distribution of data value for "Good" is most widespread among all responses, In 2010, the mean value of data value is also increasing from "Poor" to "Very good". 
+In 2006, the mean value of data value is increasing from "Poor" to "Very good". The mean value of data value for "Excellent" is less than that for "Very good" and "Good". The distribution of data value for "Good" is most widespread among all responses, In 2010, the mean value of data value is also increasing from "Poor" to "Very good". The mean of data value for "Excellent" is smaller than that for "very good" and "good". The distribution of data value for "Very good" is most widespread. The distribution of data value for "poor" in 2006 and 2010 are most narrow among all responses. From these two plots, we notice that the mean value for responses in two years are approximately the same.
+
 
 ## Problem 3
 
-```{r}
+```{r, message = FALSE}
 accel_df = 
   read_csv("accel_data.csv") %>% 
   janitor::clean_names() %>% 
@@ -197,14 +198,15 @@ accel_df =
 ```
 The original data records the activity in 5 weeks which are 35 days. In each day, the activity data is recorded 1440 times. After tidying the data, we aggregate all variables starting with "activity_" into one column "time". Now, the data set includes 6 variable: week, day_id, day, weekday_weekend, time, and activity_count.
 
-```{r}
+```{r, message = FALSE}
 #showing total activity for each day
 total_activity =
   accel_df %>% 
   group_by(week, day_id) %>% 
   summarize(
-    total_acti = sum(activity_count)
-  )
+    total_acti = sum(activity_count))
+
+head(total_activity, 10)
 
 ggplot(total_activity, aes(x = day_id, y = total_acti)) +
   geom_point() +
@@ -212,25 +214,29 @@ ggplot(total_activity, aes(x = day_id, y = total_acti)) +
   labs(
     x = "Day",
     y = "Total Activity in a Day",
-    title = "Figure3. Total activity in Each Day"
-  ) +
-  scale_y_continuous(
-    breaks = c(0,1E05, 2E05, 3E05, 4E05, 5E05, 6E05, 7E05),
-  )
+    title = "Figure3. Total activity in Each Day") +
+  scale_y_continuous(breaks = c(0,1E05, 2E05, 3E05, 4E05, 5E05, 6E05, 7E05))
 ```
-Figure 3 shows the total activity in each day over 5 weeks. There is no apparent trend over the weeks. Most of the total activity in a day fall between 300000 and 500000.
+The table includes three variables which are week, day_id, and total activity. Figure 3 shows the total activity in each day over 5 weeks. There is no apparent trend over the weeks. Most of the total activity in a day fall between 300000 and 500000.
 
-```{r}
+```{r, message = FALSE}
 # showing the activity over the course of the day
 accel_df %>% 
-   ggplot(
-    aes(x = time,
-    y = activity_count, 
-    group = day_id,
-    color = day))+
-  geom_smooth(aes(group = day)) + 
+  group_by(day, time) %>% 
+  mutate(activity_count = mean(activity_count)) %>% 
+  ggplot(aes(
+      x = time,
+      y = activity_count,
+      color = day)) +
+  geom_smooth(aes(group = day)) +
   scale_x_continuous(
     breaks = c(0,300, 600, 900, 1200, 1440),
-    labels = c("0AM","5AM", "10AM","3PM","8PM","12AM"))
+    labels = c("0AM","5AM", "10AM","3PM","8PM","12AM")) +
+  scale_y_continuous(
+    breaks = c(0, 300, 600, 900)) +
+  labs(
+    x = "Time",
+    y = "Activity Count",
+    title = "Figure 4. Activity count over the course of the day")
 ```
-
+Figure 4 shows that the activity counts are lower than 300 during sleeping time which is between 11 PM to 8AM. The activity counts are higher during day time which is between 300 to 600 counts. The Saturday morning and Friday night are two periods which have two highest activity counts (>600 counts) comparing with other period of time.
