@@ -189,6 +189,9 @@ accel_df =
     names_to = "time",
     names_prefix = "activity_",
     values_to = "activity_count"
+  ) %>% 
+  mutate(
+    time = as.numeric(time)
   )
 
 ```
@@ -220,15 +223,14 @@ Figure 3 shows the total activity in each day over 5 weeks. There is no apparent
 ```{r}
 # showing the activity over the course of the day
 accel_df %>% 
-  group_by(day_id) %>% 
-  ggplot(
+   ggplot(
     aes(x = time,
-    y = day_id, 
-    fill= activity_count,
-    color = week))+
-  geom_point()
-
-
-
+    y = activity_count, 
+    group = day_id,
+    color = day))+
+  geom_smooth(aes(group = day)) + 
+  scale_x_continuous(
+    breaks = c(0,300, 600, 900, 1200, 1440),
+    labels = c("0AM","5AM", "10AM","3PM","8PM","12AM"))
 ```
 
